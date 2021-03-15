@@ -12,6 +12,10 @@ fn main() {
 
     let mut stdout = stdout();
     stdout.queue(cursor::Hide).unwrap();
+    let mut prev_squares = 0;
+    let mut prev_cols = 0;
+    let mut prev_rows = 0;
+
 
     loop {
         let (cols, rows) = terminal::size().unwrap();
@@ -19,7 +23,12 @@ fn main() {
         let now = Local::now();
         let squares = time_to_squares(now, total_size);
 
-        display_time(&stdout, squares, cols);
+        if squares != prev_squares || cols != prev_cols || rows != prev_rows {
+            display_time(&stdout, squares, cols);
+            prev_squares = squares;
+            prev_cols = cols;
+            prev_rows = rows;
+        }
         thread::sleep(time::Duration::from_secs(1));
     }
 }
