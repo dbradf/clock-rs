@@ -1,9 +1,15 @@
 use std::io::{Stdout, Write, stdout};
-use crossterm::{QueueableCommand, cursor, style::Colorize, terminal, style};
+use crossterm::{QueueableCommand, cursor, style::Colorize, style, terminal};
 use chrono::{Timelike, Local, DateTime};
 use std::{thread, time};
 
 fn main() {
+    ctrlc::set_handler(move || {
+        let mut stdout = stdout();
+        stdout.queue(cursor::Show).unwrap();
+        std::process::exit(0);
+    }).unwrap();
+
     let mut stdout = stdout();
     stdout.queue(cursor::Hide).unwrap();
 
