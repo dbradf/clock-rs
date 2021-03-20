@@ -29,10 +29,9 @@ fn main() {
             prev_cols = cols;
             prev_rows = rows;
         }
-        thread::sleep(time::Duration::from_secs(1));
+            thread::sleep(time::Duration::from_millis(100));
     }
 }
-
 
 fn time_to_squares(time: DateTime<Local>, total_size: u16) -> u16 {
     const MINUTES_PER_DAY: u16 = 24 * 60;
@@ -47,15 +46,16 @@ fn time_to_squares(time: DateTime<Local>, total_size: u16) -> u16 {
 
 fn display_time(mut stdout: &Stdout, squares: u16, cols: u16) {
     stdout.queue(terminal::Clear(terminal::ClearType::All)).unwrap();
+    stdout.queue(cursor::MoveTo(0, 0)).unwrap();
 
-    // println!("{}, {}", squares, cols);
-
-    for s in 0..squares {
-        let x = s % cols; 
-        let y = s / cols;
-
-        stdout.queue(cursor::MoveTo(x, y)).unwrap();
-        stdout.queue(style::PrintStyledContent("█".yellow())).unwrap();
+    let display_rows = squares / cols;
+    let full_line = "█".repeat(cols as usize);
+    for _ in 0..display_rows - 1 {
+        stdout.queue(style::PrintStyledContent(full_line.to_string().yellow())).unwrap();
     }
+
+    let partial_line = "█".repeat((squares % cols) as usize);
+    stdout.queue(style::PrintStyledContent(partial_line.yellow())).unwrap();
+
     stdout.flush().unwrap();
 }
